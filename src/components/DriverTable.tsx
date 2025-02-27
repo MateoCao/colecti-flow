@@ -5,7 +5,7 @@ import { OptionsDropdown } from "./OptionsDropdown";
 import useSWR from "swr";
 import { useState } from "react";
 import { Button } from "@heroui/button";
-import { AddDriver } from "./AddDriver";
+import { AddDriver } from "./addDriver";
 
 const columns = [
   { key: "id", label: "Legajo" },
