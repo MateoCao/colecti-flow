@@ -5,11 +5,7 @@ import { OptionsDropdown } from "./OptionsDropdown";
 import useSWR from "swr";
 import { useState } from "react";
 import { Button } from "@heroui/button";
-import { AddDriver } from "./addDriver";
-
-// const formatDate = (date: Date) => {
-//   return date.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" });
-// };
+import { AddDriver } from "./AddDriver";
 
 const columns = [
   { key: "id", label: "Legajo" },

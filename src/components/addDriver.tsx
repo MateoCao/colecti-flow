@@ -46,7 +46,7 @@ export const AddDriver = ({onClose}: {onClose: () => void}) => {
         <Button onPress={onClose}>Cancelar</Button>
         <Input
             label="Legajo"
-            value={id ?? ""}
+            value={id !== null ? id.toString() : ""}
             type="number"
             onChange={(e) => setId(e.target.value ? parseInt(e.target.value) : null)}
             />
