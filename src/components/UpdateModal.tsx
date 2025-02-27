@@ -40,7 +40,7 @@ export const UpdateModal = ({ onClose, driverId }: UpdateModalProps) => {
         onClose();
         const resetTimeout = setTimeout(() => setIsUpdated(false), 500);
         return () => clearTimeout(resetTimeout);
-      }, 3000);
+      }, 1500);
       return () => clearTimeout(closeTimeout);
     }
   }, [isUpdated]);
