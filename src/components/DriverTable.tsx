@@ -7,9 +7,9 @@ import { useState } from "react";
 import { Button } from "@heroui/button";
 import { AddDriver } from "./addDriver";
 
-const formatDate = (date: Date) => {
-  return date.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" });
-};
+// const formatDate = (date: Date) => {
+//   return date.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" });
+// };
 
 const columns = [
   { key: "id", label: "Legajo" },
@@ -46,9 +46,6 @@ const DriverTable = () => {
                 <TableCell>
                   {(() => {
                     switch (columnKey) {
-                      case "startShift":
-                      case "endShift":
-                        return formatDate(driver[columnKey]);
                       case "options":
                         return <OptionsDropdown driverId={driver.id} />;
                       default:
