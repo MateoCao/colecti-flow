@@ -1,18 +1,30 @@
 import { NextResponse } from "next/server";
 import prisma from "../../../../lib/prisma";
 
-// Obtener todos los choferes
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const drivers = await prisma.driver.findMany();
-    return NextResponse.json(drivers);
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const limit = 10;
+    const skip = (page - 1) * limit;
+
+    const drivers = await prisma.driver.findMany({
+      skip,
+      take: limit,
+    });
+
+    const totalDrivers = await prisma.driver.count();
+
+    return NextResponse.json({
+      data: drivers,
+      total: totalDrivers
+    });
   } catch (error) {
-    console.log(error)
-    return NextResponse.json({ error: "Error obteniendo choferes" }, { status: 500 });
+    console.error("Error obteniendo chóferes:", error);
+    return NextResponse.json({ error: "Error obteniendo chóferes" }, { status: 500 });
   }
 }
 
-// Agregar un nuevo chofer
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -33,7 +45,6 @@ export async function POST(req: Request) {
   }
 }
 
-// PUT - Actualizar un chofer (requiere ID en la URL)
 export async function PUT(req: Request) {
   try {
     const { id, name, license, startShift, endShift } = await req.json();
@@ -45,19 +56,5 @@ export async function PUT(req: Request) {
   } catch (error) {
     console.log(error)
     return NextResponse.json({ error: "Error al actualizar chofer" }, { status: 500 });
-  }
-}
-
-// DELETE - Eliminar un chofer (requiere ID en la URL)
-export async function DELETE(req: Request) {
-  try {
-    const { id } = await req.json();
-    await prisma.driver.delete({
-      where: { id },
-    });
-    return NextResponse.json({ message: "Chofer eliminado" });
-  } catch (error) {
-    console.log(error)
-    return NextResponse.json({ error: "Error al eliminar chofer" }, { status: 500 });
   }
 }

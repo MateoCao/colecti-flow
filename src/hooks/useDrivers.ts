@@ -27,5 +27,21 @@ export const useDriver = (driverId?: number) => {
     return { success: true, statusCode };
   };
 
-  return { driver, isLoading, error, updateDriver };
+  const deleteDriver = async (driverId: number) => {
+    const response = await fetch(`/api/drivers/${driverId}`, {
+      method: "DELETE",
+    });
+
+    const statusCode = response.status;
+
+    if (!response.ok) throw new Error(`Error ${statusCode}: No se pudo eliminar el chofer`);
+
+    // Revalida los datos en caché (tabla y detalles del chofer)
+    mutate(`/api/drivers`);
+    mutate(`/api/drivers/${driverId}`);
+
+    return { success: true, statusCode };
+  };
+
+  return { driver, isLoading, error, updateDriver, deleteDriver };
 };

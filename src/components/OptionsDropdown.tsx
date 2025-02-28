@@ -10,9 +10,10 @@ import { DeleteModal } from "./DeleteModal";
 
 interface OptionsDropdownProps {
   driverId?: number;
+  currentPage: number;
 }
 
-export const OptionsDropdown = ({ driverId }: OptionsDropdownProps) => {
+export const OptionsDropdown = ({ driverId, currentPage }: OptionsDropdownProps) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [modalType, setModalType] = useState<"update" | "delete" | null>(null);
 
@@ -43,9 +44,9 @@ export const OptionsDropdown = ({ driverId }: OptionsDropdownProps) => {
           {(onClose) => (
             <>
               {modalType === "update" ? (
-                <UpdateModal onClose={onClose} driverId={driverId} />
+                <UpdateModal currentPage={currentPage} onClose={onClose} driverId={driverId} />
               ) : modalType === "delete" ? (
-                <DeleteModal onClose={onClose} driverId={driverId} />
+                <DeleteModal currentPage={currentPage} onClose={onClose} driverId={driverId} />
               ) : null}
             </>
           )}

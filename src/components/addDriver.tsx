@@ -1,10 +1,14 @@
 import { Button } from "@heroui/button"
 import { useState } from "react";
 import { mutate } from "swr";
-import { Driver } from "./driverTypes";
 import { Input } from "@heroui/react";
 
-export const AddDriver = ({onClose}: {onClose: () => void}) => {
+interface AddDriverProps {
+    onClose: () => void;
+    currentPage: number;
+}
+
+export const AddDriver = ({onClose, currentPage}: AddDriverProps) => {
     const [name, setName] = useState("");
     const [license, setLicense] = useState("");
     const [id, setId] = useState<number | null>(null);
@@ -23,10 +27,8 @@ export const AddDriver = ({onClose}: {onClose: () => void}) => {
             });
       
             if (!res.ok) throw new Error("Error al agregar chofer");
-      
-            const addedDriver = await res.json();
-      
-            mutate("/api/drivers", (drivers?: Driver[]) => [...(drivers || []), addedDriver], { revalidate: false });
+
+            mutate(`/api/drivers?page=${currentPage}`);
 
       
                 setName("");

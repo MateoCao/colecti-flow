@@ -33,23 +33,45 @@ export async function GET(req: NextRequest, {params}: {params: Promise<{ id: str
 }
 
 export async function PUT(req: NextRequest, {params}: {params: Promise<{ id: string }>}) {
-    try {
-      const { id } = await params;
-      const driverId = Number(id);
-      const { name, license, startShift, endShift } = await req.json();
-  
-      if (isNaN(driverId)) {
-        return NextResponse.json({ error: "ID inválido" }, { status: 400 });
-      }
-  
-      const updatedDriver = await prisma.driver.update({
-        where: { id: driverId },
-        data: { name, license, startShift, endShift },
-      });
-  
-      return NextResponse.json(updatedDriver);
-    } catch (error) {
-      console.error("Error actualizando chofer:", error);
-      return NextResponse.json({ error: "Error actualizando chofer" }, { status: 500 });
+  try {
+    const { id } = await params;
+    const driverId = Number(id);
+    const { name, license, startShift, endShift } = await req.json();
+
+    if (isNaN(driverId)) {
+      return NextResponse.json({ error: "ID inválido" }, { status: 400 });
     }
+
+    const updatedDriver = await prisma.driver.update({
+      where: { id: driverId },
+      data: { name, license, startShift, endShift },
+    });
+
+    return NextResponse.json(updatedDriver);
+  } catch (error) {
+    console.error("Error actualizando chofer:", error);
+    return NextResponse.json({ error: "Error actualizando chofer" }, { status: 500 });
   }
+}
+
+
+export async function DELETE(req: NextRequest, {params}: {params: Promise<{ id: string }>}) {
+  try {
+    const { id } = await params;
+    const driverId = Number(id);
+
+    if (isNaN(driverId)) {
+      return NextResponse.json({ error: "ID inválido" }, { status: 400 });
+    }
+
+    await prisma.driver.delete({
+      where: { id: driverId },
+    });
+
+    
+    return NextResponse.json({ message: "Chofer eliminado" });
+  } catch (error) {
+    console.log(error)
+    return NextResponse.json({ error: "Error al eliminar chofer" }, { status: 500 });
+  }
+}

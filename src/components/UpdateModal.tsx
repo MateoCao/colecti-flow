@@ -3,54 +3,39 @@ import { Button } from "@heroui/button";
 import { Input, Form, Alert } from "@heroui/react";
 import { useState, useEffect } from "react";
 import { useDriver } from "@/hooks/useDrivers";
+import { mutate } from "swr";
+import { Driver } from "./driverTypes";
  
 
 interface UpdateModalProps {
   onClose: () => void;
   driverId?: number;
+  currentPage: number;
 }
 
-export const UpdateModal = ({ onClose, driverId }: UpdateModalProps) => {
+export const UpdateModal = ({ onClose, driverId, currentPage }: UpdateModalProps) => {
   const { driver, isLoading, error, updateDriver } = useDriver(driverId);
+  const [formData, setFormData] = useState<Driver | null>(null);
   const [isUpdated, setIsUpdated] = useState(false);
 
-  const [formData, setFormData] = useState({
-    id: driverId || 0,
-    name: "",
-    license: "",
-    startShift: "",
-    endShift: "",
-  });
-
   useEffect(() => {
-    if (driver) {
-      setFormData({
-        id: driver.id || 0,
-        name: driver.name || "",
-        license: driver.license || "",
-        startShift: driver.startShift || "",
-        endShift: driver.endShift || "",
-      });
-    }
+    if (driver) setFormData(driver);
   }, [driver]);
 
   useEffect(() => {
     if (isUpdated) {
-      const closeTimeout = setTimeout(() => {
-        onClose();
-        const resetTimeout = setTimeout(() => setIsUpdated(false), 500);
-        return () => clearTimeout(resetTimeout);
-      }, 1500);
-      return () => clearTimeout(closeTimeout);
+      mutate(`/api/drivers?page=${currentPage}`);
+      setTimeout(onClose, 1500);
     }
-  }, [isUpdated]);
+  }, [isUpdated, currentPage, onClose]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData!, [e.target.name]: e.target.value });
   };
 
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!formData) return;
     const result = await updateDriver(formData);
     if (result.success) {
       setIsUpdated(true);
@@ -78,9 +63,9 @@ export const UpdateModal = ({ onClose, driverId }: UpdateModalProps) => {
       <> 
       <ModalHeader>Modificar Chofer</ModalHeader>
       <ModalBody>
-        {driver ? (
+        {formData ? (
           <Form onSubmit={(e) => handleUpdate(e)}>
-            <Input label="Legajo" readOnly defaultValue={driver.id} />
+            <Input label="Legajo" readOnly defaultValue={formData.id.toString()} />
             <Input onChange={handleChange} name="name" label="Nombre" value={formData.name} />
             <Input onChange={handleChange} name="license" label="Licencia" value={formData.license} />
             <Input onChange={handleChange} name="startShift" label="Inicio del turno" value={formData.startShift} />
@@ -101,3 +86,4 @@ export const UpdateModal = ({ onClose, driverId }: UpdateModalProps) => {
     </>
   );
 };
+
